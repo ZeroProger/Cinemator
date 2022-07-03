@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common'
-import { path } from 'app-root-path'
 import { FileResponse } from './file.interface'
+import { path } from 'app-root-path'
 import { ensureDir, writeFile } from 'fs-extra'
+import * as sharpPath from 'path'
+import * as sharp from 'sharp'
 
 @Injectable()
 export class FileService {
 	async saveFiles(
-		files: Express.Multer.File[],
+		files: Array<Express.Multer.File>,
 		folder: string = 'default'
 	): Promise<FileResponse[]> {
 		const uploadFolder = `${path}/uploads/${folder}`
@@ -15,10 +17,17 @@ export class FileService {
 
 		const res: FileResponse[] = await Promise.all(
 			files.map(async (file) => {
-				await writeFile(`${uploadFolder}/${file.originalname}`, file.buffer)
+				const originalName = sharpPath.parse(file.originalname).name
+				const filename = originalName + '-' + Date.now() + '.webp'
+
+				await sharp(file.buffer)
+					.resize(800)
+					.webp({ effort: 6, quality: 90 })
+					.toFile(sharpPath.join(uploadFolder, filename))
+
 				return {
-					url: `/uploads/${folder}/${file.originalname}`,
-					name: file.originalname,
+					url: `/uploads/${folder}/${filename}`,
+					name: filename,
 				}
 			})
 		)
