@@ -1,0 +1,15 @@
+@import '../../../styles/variables';
+
+.sidebarWrapper {
+	@apply bg-gray-900 h-full w-full flex flex-col pt-layout;
+
+	.sidebarContent {
+		@apply bg-gray-900 h-full w-full flex flex-col gap-y-8;
+		width: $sidebar-width;
+		min-width: $sidebar-width;
+
+		.sidebarItem {
+			@apply px-layout;
+		}
+	}
+}

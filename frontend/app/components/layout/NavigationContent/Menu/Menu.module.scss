@@ -1,0 +1,37 @@
+.menu {
+	@apply animate-fade mb-10;
+
+	.menuTitle {
+		@apply text-gray-500 uppercase text-sm font-semibold;
+	}
+
+	.menuList {
+		> li {
+			@apply border-r-4 border-r-transparent transition-colors pr-4;
+
+			> a {
+				@apply flex items-center text-gray-600 mt-6 cursor-pointer hover:text-white;
+
+				> span {
+					@apply ml-3 text-lg transition-colors;
+				}
+
+				> svg {
+					@apply text-2lg transition-colors;
+				}
+			}
+
+			&.active {
+				@apply border-r-primary;
+
+				> a > span {
+					@apply text-white;
+				}
+
+				> a > svg {
+					@apply fill-primary;
+				}
+			}
+		}
+	}
+}

@@ -36,8 +36,20 @@ export class MovieController {
 	}
 
 	@Get()
-	async getAll(@Query('searchTerm') searchTerm?: string) {
-		return this.movieService.getAll(searchTerm)
+	async getAll(
+		@Query('searchTerm') searchTerm?: string,
+		@Query('page') page?: number,
+		@Query('take') take?: number,
+		@Query('sortProperty') sortProperty?: string,
+		@Query('sortType') sortType?: string
+	) {
+		return this.movieService.getAll(
+			searchTerm,
+			page,
+			take,
+			sortProperty,
+			sortType
+		)
 	}
 
 	@Get('most-viewed')

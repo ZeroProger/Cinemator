@@ -9,24 +9,27 @@ import * as sharp from 'sharp'
 export class FileService {
 	async saveFiles(
 		files: Array<Express.Multer.File>,
-		folder: string = 'default'
+		folder: string = 'default',
+		userId: number | null = null
 	): Promise<FileResponse[]> {
-		const uploadFolder = `${path}/uploads/${folder}`
+		const uploadFolder = userId ? `${path}/uploads/avatars/${userId}` : `${path}/uploads/${folder}`
 
 		await ensureDir(uploadFolder)
 
 		const res: FileResponse[] = await Promise.all(
 			files.map(async (file) => {
 				const originalName = sharpPath.parse(file.originalname).name
-				const filename = originalName + '-' + Date.now() + '.webp'
+				const filename = originalName + '.webp'
+				const filePath = sharpPath.join(uploadFolder, filename)
+				const fileUrl = userId ? `/uploads/avatars/${userId}/${filename}` : `/uploads/${folder}/${filename}`
 
 				await sharp(file.buffer)
 					.resize(800)
 					.webp({ effort: 6, quality: 90 })
-					.toFile(sharpPath.join(uploadFolder, filename))
+					.toFile(filePath)
 
 				return {
-					url: `/uploads/${folder}/${filename}`,
+					url: fileUrl,
 					name: filename,
 				}
 			})

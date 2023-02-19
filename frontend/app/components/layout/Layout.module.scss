@@ -1,0 +1,17 @@
+@import 'styles/variables.scss';
+
+.layoutWrapper {
+	.contentWrapper {
+		@apply p-layout relative z-1;
+
+		min-height: calc(100vh - 60px);
+
+		button {
+			@apply relative;
+		}
+
+		@media screen and (min-width: $mobile-breakpoint) {
+			margin: 0 calc($sidebar-width);
+		}
+	}
+}

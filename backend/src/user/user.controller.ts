@@ -19,6 +19,7 @@ import { UpdateUserByAdminDto } from './dto/update-user-by-admin.dto'
 import { UpdateUserNameDto } from './dto/update-username.dto'
 import { UserModel } from './user.entity'
 import { UserService } from './user.service'
+import { UpdateAvatarDto } from "./dto/update-avatar-dto";
 
 @Controller('users')
 export class UserController {
@@ -55,6 +56,13 @@ export class UserController {
 	}
 
 	@UsePipes(new ValidationPipe())
+	@Put('profile/change-avatar')
+	@HttpCode(200)
+	@Auth()
+	async updateAvatar(@User('id') id: number, @Body() dto: UpdateAvatarDto) {
+		return this.userService.updateAvatar(id, dto)
+	}
+
 	@Put(':id')
 	@HttpCode(200)
 	@Auth('admin')

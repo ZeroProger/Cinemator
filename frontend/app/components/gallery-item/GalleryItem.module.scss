@@ -1,0 +1,38 @@
+.link {
+	@apply flex flex-col items-center gap-2;
+
+	.image {
+		@apply rounded-xl shadow-md transition-transform;
+
+		&:hover {
+			@apply scale-105;
+		}
+	}
+
+	.title {
+		@apply text-center text-white text-xl transition-colors;
+
+		&:hover {
+			@apply text-primary;
+		}
+	}
+
+	.info {
+		@apply w-full;
+
+		.tooltip {
+			@apply w-full overflow-hidden;
+		}
+	}
+
+	.span {
+		@apply w-full text-lg text-white text-center transition-all;
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+
+		&:hover {
+			@apply text-primary;
+		}
+	}
+}

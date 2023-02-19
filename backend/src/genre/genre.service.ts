@@ -17,6 +17,7 @@ export class GenreService {
 	async bySlug(slug: string) {
 		const genre = await this.GenreRepository.findOne({
 			where: { slug: slug },
+			relations: ['movies'],
 		})
 
 		if (!genre) throw new NotFoundException('Жанр не найден')
@@ -59,7 +60,7 @@ export class GenreService {
 				const movies = await this.movieService.byGenres([genre.id])
 				const result: ICollection = {
 					id: genre.id,
-					image: movies[0]?.bigPoster,
+					image: movies[0]?.bigPoster || movies[0]?.poster,
 					title: genre.name,
 					slug: genre.slug,
 				}
@@ -69,6 +70,32 @@ export class GenreService {
 		)
 
 		return collections
+	}
+
+	async getMostPopularGenres() {
+		const mostViewedMovies = await this.movieService.getMostViewed()
+		const genreArrays = await mostViewedMovies.map((movie) => movie.genres)
+		let genres: GenreModel[] = []
+
+		genreArrays.forEach((genreArray) => {
+			genreArray.forEach((genre) => {
+				genres.push(genre)
+			})
+		})
+
+		const uniqueGenres = this.unique(
+			Array.from(new Set<GenreModel>(genres)),
+			'id'
+		)
+
+		return uniqueGenres.slice(0, 4)
+	}
+
+	unique(array, propertyName): Array<GenreModel> {
+		return array.filter(
+			(e, i) =>
+				array.findIndex((a) => a[propertyName] === e[propertyName]) === i
+		)
 	}
 
 	/* Admin */

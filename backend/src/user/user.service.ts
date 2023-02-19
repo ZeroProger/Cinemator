@@ -13,6 +13,7 @@ import { UpdatePasswordDto } from './dto/update-password.dto'
 import { UpdateUserByAdminDto } from './dto/update-user-by-admin.dto'
 import { UpdateUserNameDto } from './dto/update-username.dto'
 import { UserModel } from './user.entity'
+import { UpdateAvatarDto } from "./dto/update-avatar-dto";
 
 @Injectable()
 export class UserService {
@@ -40,7 +41,7 @@ export class UserService {
 
 	async updateProfile(
 		id: number,
-		dto: UpdateEmailDto | UpdatePasswordDto | UpdateUserNameDto | any
+		dto: UpdateEmailDto | UpdatePasswordDto | UpdateUserNameDto
 	) {
 		const user = await this.byId(id)
 
@@ -53,6 +54,18 @@ export class UserService {
 			await this.UserRepository.save(user)
 			return
 		}
+
+		await this.UserRepository.update(id, dto)
+		return
+	}
+
+	async updateAvatar(
+		id: number,
+		dto: UpdateAvatarDto
+	) {
+		const user = await this.byId(id)
+
+		if (!user) throw new NotFoundException('Пользователь с данным id не найден')
 
 		await this.UserRepository.update(id, dto)
 		return
@@ -103,8 +116,11 @@ export class UserService {
 			user.isAdmin = dto.isAdmin
 		}
 
-		await this.UserRepository.save(user)
-		return
+		if (dto.avatarUrl) {
+			user.avatarUrl = dto.avatarUrl
+		}
+
+		return await this.UserRepository.save(user)
 	}
 
 	async getCount() {
@@ -123,19 +139,20 @@ export class UserService {
 				email: true,
 				userName: true,
 				isAdmin: true,
+				avatarUrl: true,
 				createdAt: true,
 			},
 			order: {
-				createdAt: 'DESC',
+				id: 'ASC',
 			},
 		}
 
 		if (searchTerm) {
 			whereOptions = {
-				where: {
-					email: ILike(`%${searchTerm}%`),
-					userName: ILike(`%${searchTerm}%`),
-				},
+				where: [
+					{email: ILike(`%${String(searchTerm)}%`)},
+					{userName: ILike(`%${String(searchTerm)}%`)},
+				],
 			}
 		}
 

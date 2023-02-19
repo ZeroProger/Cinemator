@@ -30,6 +30,11 @@ export class GenreController {
 		return this.genreService.getCollections()
 	}
 
+	@Get('most-popular')
+	async getMostPopularGenres() {
+		return this.genreService.getMostPopularGenres()
+	}
+
 	@Get()
 	async getAll(@Query('searchTerm') searchTerm?: string) {
 		return this.genreService.getAll(searchTerm)

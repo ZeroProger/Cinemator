@@ -17,6 +17,9 @@ export class UserModel extends BaseModel {
 	@Column({ default: false })
 	isAdmin: boolean
 
+	@Column({ default: '/uploads/avatars/default.webp' })
+	avatarUrl: string
+
 	@ManyToMany(() => MovieModel, {
 		cascade: true,
 	})

@@ -7,10 +7,7 @@ const plugin = require('tailwindcss/plugin')
 const primary = '#E30B13'
 
 module.exports = {
-	content: [
-		'./pages/**/*.{js,ts,jsx,tsx}',
-		'./app/components/**/*.{js,ts,jsx,tsx}',
-	],
+	content: ['./pages/**/*.{js,ts,jsx,tsx}', './app/components/**/*.{js,ts,jsx,tsx}'],
 	theme: {
 		colors: {
 			primary,
@@ -35,7 +32,7 @@ module.exports = {
 		extend: {
 			spacing: {
 				0.5: '0.12rem',
-				layout: '2.75rem',
+				layout: '2rem',
 			},
 			fontSize: {
 				'2lg': '1.38rem',

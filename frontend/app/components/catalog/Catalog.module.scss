@@ -1,0 +1,21 @@
+.heading {
+	@apply mb-2;
+}
+
+.description {
+	@apply mb-6;
+}
+
+.movies {
+	@apply grid gap-3 grid-flow-dense;
+	grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.genres {
+	@apply grid gap-x-4 gap-y-5 grid-flow-dense;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+	@media screen and (max-width: 1000px) {
+		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	}
+}

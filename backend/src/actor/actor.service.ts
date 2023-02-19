@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { MovieModel } from 'src/movie/movie.entity'
-import { ILike, In, Repository } from 'typeorm'
+import { ILike, Repository } from 'typeorm'
 import { ActorModel } from './actor.entity'
 import { UpdateActorDto } from './dto/update-actor.dto'
 
@@ -17,6 +17,7 @@ export class ActorService {
 	async bySlug(slug: string) {
 		const actor = await this.ActorRepository.findOne({
 			where: { slug: slug },
+			relations: ['movies'],
 		})
 
 		if (!actor) throw new NotFoundException('Актер не найден')

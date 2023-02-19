@@ -1,0 +1,44 @@
+.link {
+	@apply flex items-center gap-2 py-3 px-4 relative;
+
+	&::after {
+		@apply absolute right-0 h-0 w-0.5 bg-transparent;
+		content: '';
+		top: 28%;
+		transition: all 0.3s ease-in-out;
+	}
+
+	&:hover::after {
+		@apply bg-primary h-2/5;
+	}
+
+	> span {
+		min-width: 50px;
+	}
+
+	img {
+		@apply rounded-image block min-h-fit min-w-fit;
+	}
+
+	.info {
+		@apply flex justify-between w-full gap-2 items-center overflow-auto;
+
+		.rating {
+			@apply flex gap-1 items-center;
+
+			> span {
+				@apply text-lg;
+			}
+		}
+
+		.tooltip {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+
+			span {
+				@apply text-white truncate text-lg;
+			}
+		}
+	}
+}

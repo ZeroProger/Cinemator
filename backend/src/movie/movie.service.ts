@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ActorModel } from 'src/actor/actor.entity'
 import { GenreModel } from 'src/genre/genre.entity'
-import { ILike, In, MoreThan, Repository } from 'typeorm'
+import { ILike, In, Repository } from 'typeorm'
 import { UpdateMovieDto } from './dto/update-movie.dto'
 import { MovieModel } from './movie.entity'
 
@@ -17,28 +17,51 @@ export class MovieService {
 		private readonly ActorRepository: Repository<ActorModel>
 	) {}
 
-	async getAll(searchTerm?: string) {
+	async getAll(
+		searchTerm?: string,
+		page: number = 1,
+		take: number = 1,
+		sortProperty: string = 'id',
+		sortType: string = 'ASC'
+	) {
+		const skip = (page - 1) * take
+
 		let options = {}
 		let whereOptions = {}
+		let orderOptions = {
+			[sortProperty]: sortType,
+		}
+
 		const basicOptions = {
-			order: {
-				id: 'ASC',
-			},
+			order: orderOptions,
 			relations: ['actors', 'genres'],
+			skip: skip,
+			take: take,
 		}
 
 		if (searchTerm) {
 			whereOptions = {
 				where: [
-					{ title: ILike(`%${searchTerm}%`) },
-					{ titleOriginal: ILike(`%${searchTerm}%`) },
+					{
+						title:
+							searchTerm.length > 1
+								? ILike(`%${searchTerm}%`)
+								: ILike(`${searchTerm}%`),
+					},
+					{
+						titleOriginal:
+							searchTerm.length > 1
+								? ILike(`%${searchTerm}%`)
+								: ILike(`${searchTerm}%`),
+					},
 				],
 			}
 		}
 
 		options = Object.assign({}, basicOptions, whereOptions)
 
-		return await this.MovieRepository.find(options)
+		const [result, total] = await this.MovieRepository.findAndCount(options)
+		return { data: result, totalCount: total }
 	}
 
 	async getCount() {
@@ -47,7 +70,7 @@ export class MovieService {
 
 	async getMostViewed() {
 		return await this.MovieRepository.find({
-			where: { countOpened: MoreThan(0) },
+			relations: ['genres'],
 			order: {
 				countOpened: 'DESC',
 			},
@@ -55,25 +78,21 @@ export class MovieService {
 	}
 
 	async bySlug(slug: string) {
-		// const movie = await this.MovieRepository.findOne({
-		// 	where: { slug: slug },
-		// 	relations: ['actors', 'genres', 'reviews', 'reviews.user'],
-		// 	select: {
-		// 		reviews: {
-		// 			user: {
-		// 				id: true,
-		// 			},
-		// 		},
-		// 	},
-		// })
-
 		const movie = await this.MovieRepository.createQueryBuilder('movies')
 			.where('movies.slug = :slug', { slug: slug })
 			.leftJoin('movies.actors', 'actors')
 			.leftJoin('movies.genres', 'genres')
 			.leftJoin('movies.reviews', 'reviews')
 			.leftJoin('reviews.user', 'user')
-			.addSelect(['actors', 'genres', 'reviews', 'user.id', 'user.email'])
+			.addSelect([
+				'actors',
+				'genres',
+				'reviews',
+				'user.id',
+				'user.email',
+				'user.avatarUrl',
+				'user.userName',
+			])
 			.getOne()
 
 		if (!movie) throw new NotFoundException('Фильм не найден')
@@ -87,25 +106,22 @@ export class MovieService {
 				actors: true,
 				genres: true,
 			},
-			where: {
+			order: {
 				actors: {
-					id: In(actorIds),
+					id: 'ASC',
+				},
+				genres: {
+					id: 'ASC',
 				},
 			},
 		})
 
 		if (!movies) throw new NotFoundException('Фильмы не найдены')
 
-		const movieIds = movies.map((movie) => movie.id)
-
-		const filteredMovies = await this.MovieRepository.find({
-			relations: {
-				actors: true,
-				genres: true,
-			},
-			where: {
-				id: In(movieIds),
-			},
+		const filteredMovies = movies.filter((movie) => {
+			const movieActors = movie.actors.map((actor) => actor.id)
+			if (actorIds.every((actorId) => movieActors.includes(actorId)))
+				return movie
 		})
 
 		if (!filteredMovies) throw new NotFoundException('Фильмы не найдены')
@@ -115,26 +131,27 @@ export class MovieService {
 
 	async byGenres(genreIds: number[]) {
 		const movies = await this.MovieRepository.find({
-			relations: ['actors', 'genres'],
-			where: {
+			relations: {
+				actors: true,
+				genres: true,
+			},
+			order: {
+				countOpened: 'DESC',
+				actors: {
+					id: 'ASC',
+				},
 				genres: {
-					id: In(genreIds),
+					id: 'ASC',
 				},
 			},
 		})
 
 		if (!movies) throw new NotFoundException('Фильмы не найдены')
 
-		const movieIds = movies.map((movie) => movie.id)
-
-		const filteredMovies = await this.MovieRepository.find({
-			relations: {
-				actors: true,
-				genres: true,
-			},
-			where: {
-				id: In(movieIds),
-			},
+		const filteredMovies = movies.filter((movie) => {
+			const movieGenres = movie.genres.map((genre) => genre.id)
+			if (genreIds.every((genreId) => movieGenres.includes(genreId)))
+				return movie
 		})
 
 		if (!filteredMovies) throw new NotFoundException('Фильмы не найдены')
@@ -183,19 +200,19 @@ export class MovieService {
 		if (!movie) throw new NotFoundException('Фильм не найден')
 
 		const genres = dto.genres
-			? await await this.GenreRepository.find({
+			? await this.GenreRepository.find({
 					where: {
 						id: In(dto.genres),
 					},
 			  })
-			: []
+			: movie.genres
 		const actors = dto.actors
-			? await await this.ActorRepository.find({
+			? await this.ActorRepository.find({
 					where: {
 						id: In(dto.actors),
 					},
 			  })
-			: []
+			: movie.actors
 
 		for (const field in dto) {
 			movie[field] = dto[field]
