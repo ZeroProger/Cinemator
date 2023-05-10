@@ -1,16 +1,47 @@
 /** @type {import('tailwindcss').Config} */
 
-const { white } = require('tailwindcss/colors')
+const { white, gray } = require('tailwindcss/colors')
 const colors = require('tailwindcss/colors')
+const { fontFamily } = require('tailwindcss/defaultTheme')
 const plugin = require('tailwindcss/plugin')
 
-const primary = '#E30B13'
+const primary = '#08c466'
+const secondary = '#00b303'
+const secondaryGray = '#006B6A'
+const secondaryBlue = '#59BAB8'
+const secondaryDirt = '#bb855d'
+const background = '#192024'
+const backgroundLight = 'var(--nextui-colors-gray200)'
+const lightGray = 'var(--light-gray)'
+const textLightGray = 'var(--nextui-colors-text)'
+const error = '#f74343'
+const errorHover = '#dc0909'
+const errorText = '#fa8585'
+const warn = '#513826'
+const warnText = '#d09f5f'
+const gray800 = 'var(--bg-gray-800)'
+const backgroundLandscape = '#171b3d'
 
 module.exports = {
-	content: ['./pages/**/*.{js,ts,jsx,tsx}', './app/components/**/*.{js,ts,jsx,tsx}'],
+	content: ['./pages/**/*.{js,ts,jsx,tsx}', './app/**/*.{js,ts,jsx,tsx}'],
 	theme: {
 		colors: {
 			primary,
+			secondary,
+			secondaryGray,
+			secondaryBlue,
+			secondaryDirt,
+			background,
+			backgroundLight,
+			lightGray,
+			textLightGray,
+			error,
+			errorHover,
+			errorText,
+			warn,
+			warnText,
+			gray800,
+			backgroundLandscape,
 			black: colors.black,
 			white: colors.white,
 			transparent: colors.transparent,
@@ -29,17 +60,28 @@ module.exports = {
 				950: '#1a1a1a',
 			},
 		},
+		screens: {
+			md: { max: '900px' },
+			'md-min': { min: '900px' },
+			'md-header': { max: '768px' },
+			sm: { max: '600px' },
+			xs: { max: '50px' },
+		},
 		extend: {
 			spacing: {
 				0.5: '0.12rem',
 				layout: '2rem',
 			},
 			fontSize: {
+				md: '1rem',
 				'2lg': '1.38rem',
+			},
+			fontFamily: {
+				sans: ['var(--font-rubik)', ...fontFamily.sans],
 			},
 			borderRadius: {
 				image: '0.5rem',
-				layout: '0.8rem',
+				layout: '1.25rem',
 			},
 			transitionTimingFunction: {
 				DEFAULT: 'ease-in-out',
@@ -84,14 +126,73 @@ module.exports = {
 			addComponents({
 				'.btn-primary': {
 					backgroundColor: primary,
-					color: white,
+					color: '#e6e6e6',
 					borderRadius: '0.65rem',
+					padding: '13px 15px',
+					wordWrap: 'normal',
+					whiteSpace: 'nowrap',
+					fontSize: '1.25rem !important',
+					minWidth: 'auto',
 					transition: 'background-color .3s ease-in-out',
 					'&:hover': {
-						backgroundColor: '#ff0009',
+						backgroundColor: secondary,
 					},
 					'&:active': {
-						backgroundColor: '#ff0009',
+						backgroundColor: secondary,
+					},
+				},
+				'.btn-error': {
+					backgroundColor: error,
+					color: '#e6e6e6',
+					borderRadius: '0.65rem',
+					padding: '13px 15px',
+					wordWrap: 'normal',
+					whiteSpace: 'nowrap',
+					fontSize: '1.125rem !important',
+					minWidth: 'auto',
+					transition: 'background-color .3s ease-in-out',
+					'&:hover': {
+						backgroundColor: errorHover,
+					},
+					'&:active': {
+						backgroundColor: errorHover,
+					},
+				},
+				'.btn-default': {
+					backgroundColor: gray800,
+					color: '#e6e6e6',
+					borderRadius: '0.65rem',
+					padding: '13px 15px',
+					wordWrap: 'normal',
+					whiteSpace: 'nowrap',
+					fontSize: '1.125rem !important',
+					minWidth: 'auto',
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					transition: 'background-color .3s ease-in-out',
+					'&:hover': {
+						backgroundColor: lightGray,
+					},
+					'&:active': {
+						backgroundColor: lightGray,
+					},
+				},
+				'.btn-secondary-gray': {
+					backgroundColor: secondaryBlue,
+					color: '#e6e6e6',
+					borderRadius: '0.65rem',
+					padding: '13px 15px',
+					wordWrap: 'normal',
+					whiteSpace: 'nowrap',
+					fontSize: '1.125rem !important',
+					minWidth: 'auto',
+					transition: 'background-color .3s ease-in-out',
+					'&:hover': {
+						backgroundColor: secondaryGray,
+					},
+					'&:active': {
+						backgroundColor: secondaryGray,
 					},
 				},
 				'.text-link': {
@@ -109,6 +210,11 @@ module.exports = {
 					backgroundColor: theme('colors.gray.950'),
 					color: theme('colors.white'),
 					boxShadow: theme('boxShadow.lg'),
+				},
+				'.content-container': {
+					maxWidth: 'var(--container-max-width)',
+					width: '100%',
+					margin: '0 auto',
 				},
 			}),
 				addUtilities({

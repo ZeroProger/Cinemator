@@ -17,11 +17,13 @@ const nextConfig = {
 		return [
 			{
 				source: '/api/:path*',
-				destination: 'http://localhost:5500/api/:path*',
+				destination: `${process.env.APP_SERVER_URL || process.env.REACT_APP_SERVER_URL}/api/:path*`,
 			},
 			{
 				source: '/uploads/:path*',
-				destination: 'http://localhost:5500/uploads/:path*',
+				destination: `${
+					process.env.APP_SERVER_URL || process.env.REACT_APP_SERVER_URL
+				}/uploads/:path*`,
 			},
 		]
 	},

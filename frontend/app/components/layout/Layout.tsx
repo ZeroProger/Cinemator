@@ -2,7 +2,6 @@ import { useRouter } from 'next/router'
 import { FC, Fragment, PropsWithChildren, useEffect, useState } from 'react'
 import Sidebar from 'react-sidebar'
 
-import Header from '@/components/layout/Header/Header'
 import NavigationContent from '@/components/layout/NavigationContent/NavigationContent'
 import SidebarContent from '@/components/layout/SidebarContent/SidebarContent'
 
@@ -10,6 +9,7 @@ import useMediaQuery from '@/hooks/useMediaQuery'
 
 import { minWidthMediaQuery } from '@/config/mediaQuery.config'
 
+import Header from './Header/Header'
 import styles from './Layout.module.scss'
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {

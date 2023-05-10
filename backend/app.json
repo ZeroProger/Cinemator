@@ -1,0 +1,61 @@
+{
+	"name": "Cinemator",
+	"description": "Cinemator - cмотрите фильмы и сериалы онлайн, бесплатно и в хорошем качестве",
+	"website": "https://cinemator.ru",
+	"repository": "https://github.com/ZeroProger/Cinemator",
+	"logo": "",
+	"success_url": "/",
+	"scripts": {
+		"predeploy": "npm install && npm run build"
+	},
+	"env": {
+		"NODE_ENV": {
+			"description": "Production or development mode",
+			"value": "production"
+		},
+		"PORT": {
+			"description": "Server Port",
+			"value": "5"
+		},
+		"JWT_SECRET": {
+			"description": "Secret JWT auth phrase",
+			"value": "fs!af21!312rfa!s123"
+		},
+		"EXP_TIME": {
+			"description": "Expiration time for access and refresh tokens",
+			"value": "15d"
+		},
+		"POSTGRES_HOST": {
+			"description": "Database host address",
+			"value": "localhost"
+		},
+		"POSTGRES_PORT": {
+			"description": "Database port",
+			"value": "5432"
+		},
+		"POSTGRES_USER": {
+			"description": "Database user name",
+			"value": "postgres"
+		},
+		"POSTGRES_PASSWORD": {
+			"description": "Database password",
+			"value": ""
+		},
+		"POSTGRES_DB": {
+			"description": "Database name",
+			"value": ""
+		}
+	},
+	"formation": {
+		"web": {
+			"quantity": 1
+		}
+	},
+	"image": "heroku/nodejs",
+	"addons": ["heroku-postgresql"],
+	"buildpacks": [
+		{
+			"url": "heroku/nodejs"
+		}
+	]
+}
